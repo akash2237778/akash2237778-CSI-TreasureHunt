@@ -7,46 +7,114 @@ using Firebase.Unity.Editor;
 
 public class FirebaseScript : MonoBehaviour
 {
-    public TextMesh Rtext;
-    
+  //  public TextMesh Rtext;
+    DatabaseReference reference;
+    public static string s = "";
+
     // Start is called before the first frame update
     void Start()
     {
-        Rtext.text = "Hello";
+        //Rtext.text = "Hello";
         FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://csi-treasurehunt.firebaseio.com/");
+        reference = FirebaseDatabase.DefaultInstance.RootReference;
 
-        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
-        //send
-        reference.Child("csi-treasurehunt").Child("Child").SetValueAsync("val123ue");
+        saveData("Akash", "Saini");
+        saveData("Ak", 2);
 
-        //retrive
-       /* FirebaseDatabase.DefaultInstance
-  .GetReference("csi-treasurehunt")
-  .GetValueAsync().ContinueWith(task => {
-      if (task.IsFaulted)
-      {
-          Rtext.text = "True";
-          // Handle the error...
-      }
-      else if (task.IsCompleted)
-      {
-
-          DataSnapshot snapshot = task.Result;
-          Rtext.text = snapshot.Key;
-          Debug.Log(snapshot);
-          }
-  });*/
-       
-
-        //var ref = FirebaseDatabase.DefaultInstance.GetReference("GameSessionComments");
-        FirebaseDatabase.DefaultInstance.GetReference("csi-treasurehunt").ChildChanged += HandleChildChanged;
-        //ref.ChildChanged += HandleChildChanged;
-        //ref.ChildRemoved += HandleChildRemoved;
-        //ref.ChildMoved += HandleChildMoved;
+        reference.ChildChanged += HandleChildAdded;
+        reference.ChildChanged += HandleChildChanged;
+        reference.ChildRemoved += HandleChildRemoved;
+        reference.ChildMoved += HandleChildMoved;
+        retriveData("csi-treasurehunt/Questions/github/");
 
     }
 
+    public void setupFirebase() {
+        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://csi-treasurehunt.firebaseio.com/");
+        reference = FirebaseDatabase.DefaultInstance.RootReference;
+    }
 
+    public void retriveData(string reference) {
+        
+        FirebaseDatabase.DefaultInstance
+          .GetReference(reference)
+          .GetValueAsync().ContinueWith(task => {
+              if (task.IsFaulted)
+              {
+              // Handle the error...
+          }
+              else if (task.IsCompleted)
+              {
+                 
+                  DataSnapshot snapshot = task.Result;
+                 // string sss = (string)snapshot.Value;
+
+                  List<string> list = new List<string>();
+                  foreach (var childSnapshot in snapshot.Children)
+                  {
+                      //Debug.Log(childSnapshot.Key);
+                      list.Add(childSnapshot.Key);
+                  }
+
+                  s = list[0];
+                 // Rtext.text = "s";
+                  // Do something with snapshot...
+              }
+          });
+    }
+/*
+    void HandleValueChanged(object sender, ValueChangedEventArgs args)
+    {
+        if (args.DatabaseError != null)
+        {
+            Debug.LogError(args.DatabaseError.Message);
+            return;
+        }
+        Debug.Log(args.Snapshot.Value);
+        Rtext.text = (string)args.Snapshot.Value;
+        // Do something with the data in args.Snapshot
+    }
+    */
+
+    public void saveData(string child, int value) {
+        reference.Child("csi-treasurehunt").Child(child).SetValueAsync(value);
+    }
+
+    public void saveData(string child, string value) {
+        reference.Child("csi-treasurehunt").Child(child).SetValueAsync(value);
+    }
+
+
+    void HandleChildAdded(object sender, ChildChangedEventArgs args)
+    {
+        if (args.DatabaseError != null)
+        {
+            Debug.LogError(args.DatabaseError.Message);
+            return;
+        }
+        // Do something with the data in args.Snapshot
+    }
+
+
+    void HandleChildRemoved(object sender, ChildChangedEventArgs args)
+    {
+        if (args.DatabaseError != null)
+        {
+            Debug.LogError(args.DatabaseError.Message);
+            return;
+        }
+        // Do something with the data in args.Snapshot
+    }
+
+    void HandleChildMoved(object sender, ChildChangedEventArgs args)
+    {
+        if (args.DatabaseError != null)
+        {
+            Debug.LogError(args.DatabaseError.Message);
+            return;
+        }
+        // Do something with the data in args.Snapshot
+    }
 
     void HandleChildChanged(object sender, ChildChangedEventArgs args)
     {
@@ -57,21 +125,14 @@ public class FirebaseScript : MonoBehaviour
         }
         Debug.Log(args.Snapshot);
         
-        Rtext.text = args.Snapshot.Key;
+       // Rtext.text = args.Snapshot.Key;
         // Do something with the data in args.Snapshot
     }
-
-   
-
-   
-
-
-
 
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
