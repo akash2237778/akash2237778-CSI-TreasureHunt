@@ -78,9 +78,9 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
             tracker.GetTargetFinder<ImageTargetFinder>().EnableTracking(targetSearchResult, ImageTargetTemplate.gameObject);
             
             
-            string ImageTargetName = ImageTargetTemplate.name;
+            //string ImageTargetName = ImageTargetTemplate.name;
 
-            obj.retriveData("csi-treasurehunt/Questions/github/");
+            obj.retriveData("csi-treasurehunt/Questions/"+ targetSearchResult.TargetName + "/");
 
             RText.text = obj.s;
         }
