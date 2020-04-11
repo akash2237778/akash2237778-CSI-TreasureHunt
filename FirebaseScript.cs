@@ -5,24 +5,13 @@ using Firebase;
 using Firebase.Database;
 using Firebase.Unity.Editor;
 
-public class Qlist
-{
-   public Qlist(string k, string v) {
-        key = k;
-        value = v;
-    }
-    public string key;
-    public string value;
 
-
-}
 
 public class FirebaseScript : MonoBehaviour
 {
+    public Dictionary<string, string> retriveList;
 
-    public List<Qlist> list;
 
-    //  public TextMesh Rtext;
 
     DatabaseReference reference;
 
@@ -37,9 +26,9 @@ public class FirebaseScript : MonoBehaviour
     public void Start()
 
     {
+        retriveList = new Dictionary<string, string>();
         Debug.Log("firebase script");
-        list = new List<Qlist>();
-        //Rtext.text = "Hello";
+
 
 
 
@@ -107,27 +96,17 @@ public class FirebaseScript : MonoBehaviour
 
 
 
-                foreach (var childSnapshot in snapshot.Children)
-
-              {
+                foreach (var childSnapshot in snapshot.Children){
 
                   Debug.Log(childSnapshot.Key+" : "+childSnapshot.Value);
-                    list.Add(new Qlist(childSnapshot.Key.ToString(), childSnapshot.Value.ToString()));
+                    retriveList.Add(childSnapshot.Key.ToString() , childSnapshot.Value.ToString());
 
-                  //list.Add(childSnapshot.Child("Q").Value.ToString());
 
                 }
 
 
 
-              s = list[0].value;
-             Debug.Log("retrived : "+s);
-                for (int i = 0; i < list.Count; i++)
-                {
-                    Debug.Log("-----" + list[i].value);
-                }
-
-                // Rtext.text = "s";
+ 
 
                 // Do something with snapshot...
 
