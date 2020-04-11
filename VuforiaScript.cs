@@ -76,9 +76,6 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
             // enable the new result with the same ImageTargetBehaviour: 
             ObjectTracker tracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
             tracker.GetTargetFinder<ImageTargetFinder>().EnableTracking(targetSearchResult, ImageTargetTemplate.gameObject);
-            
-            
-            //string ImageTargetName = ImageTargetTemplate.name;
 
             obj.retriveData("csi-treasurehunt/Questions/"+ targetSearchResult.TargetName + "/");
 
