@@ -44,7 +44,7 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
 
         mCloudRecoBehaviour = GetComponent<CloudRecoBehaviour>();
 
-        // RText.text = "NULL";
+       
 
         if (mCloudRecoBehaviour)
 
@@ -132,7 +132,7 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
 
 
 
-        // RText.text = targetSearchResult.TargetName;
+       
 
         if (ImageTargetTemplate)
 
@@ -150,19 +150,10 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
 
 
 
-            //string ImageTargetName = ImageTargetTemplate.name;
+
+            RText.text = obj.retriveList[targetSearchResult.TargetName];
 
 
-
-            //   obj.retriveData("csi-treasurehunt/Questions/" + targetSearchResult.TargetName + "/Q");
-
-
-
-            //  RText.text = obj.s;
-            for (int i = 0; i < obj.list.Count; i++)
-            {
-                Debug.Log("-----" + obj.list[i].value);
-            }
 
         }
 
