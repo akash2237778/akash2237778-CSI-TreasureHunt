@@ -9,15 +9,15 @@ public class FirebaseScript : MonoBehaviour
 {
   //  public TextMesh Rtext;
     DatabaseReference reference;
-    public static string s = "";
+    public string s;
+    
 
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
         //Rtext.text = "Hello";
-        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://csi-treasurehunt.firebaseio.com/");
-        reference = FirebaseDatabase.DefaultInstance.RootReference;
 
+        setupFirebase();
         saveData("Akash", "Saini");
         saveData("Ak", 2);
 
@@ -25,7 +25,7 @@ public class FirebaseScript : MonoBehaviour
         reference.ChildChanged += HandleChildChanged;
         reference.ChildRemoved += HandleChildRemoved;
         reference.ChildMoved += HandleChildMoved;
-        retriveData("csi-treasurehunt/Questions/github/");
+       
 
     }
 
@@ -42,7 +42,7 @@ public class FirebaseScript : MonoBehaviour
               if (task.IsFaulted)
               {
               // Handle the error...
-          }
+                }
               else if (task.IsCompleted)
               {
                  

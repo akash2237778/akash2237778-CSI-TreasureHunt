@@ -13,15 +13,16 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
     public ImageTargetBehaviour ImageTargetTemplate;
     public TextMesh RText;
     public static bool isfound = false;
-    
- 
+    FirebaseScript obj;
+
 
 
 
     // Use this for initialization 
     void Start()
     {
- 
+       obj = new FirebaseScript();
+
         // register this event handler at the cloud reco behaviour 
         mCloudRecoBehaviour = GetComponent<CloudRecoBehaviour>();
        // RText.text = "NULL";
@@ -32,12 +33,6 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
 
 
     }
-
-
-
-
-
-    
 
 
     public void OnInitialized(TargetFinder targetFinder)
@@ -81,8 +76,13 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
             // enable the new result with the same ImageTargetBehaviour: 
             ObjectTracker tracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
             tracker.GetTargetFinder<ImageTargetFinder>().EnableTracking(targetSearchResult, ImageTargetTemplate.gameObject);
+            
+            
+            string ImageTargetName = ImageTargetTemplate.name;
 
-            RText.text = FirebaseScript.s;
+            obj.retriveData("csi-treasurehunt/Questions/github/");
+
+            RText.text = obj.s;
         }
     }
 
