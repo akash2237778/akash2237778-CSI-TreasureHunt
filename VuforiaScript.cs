@@ -24,7 +24,7 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
 
     GameObject g;
 
-
+    string prev_ans;
 
 
 
@@ -36,15 +36,15 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
 
     {
         g = Camera.main.gameObject;
-        obj=g.GetComponent<FirebaseScript>();
+        obj = g.GetComponent<FirebaseScript>();
 
-
+        prev_ans = "github";
 
         // register this event handler at the cloud reco behaviour 
 
         mCloudRecoBehaviour = GetComponent<CloudRecoBehaviour>();
 
-       
+
 
         if (mCloudRecoBehaviour)
 
@@ -53,14 +53,20 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
             mCloudRecoBehaviour.RegisterEventHandler(this);
 
         }
-
-
-
-
-
     }
 
-
+    void check(string imgScanned)
+    {
+        if (imgScanned.Equals(obj.retriveList[prev_ans][1]))
+        {
+            prev_ans = imgScanned;
+            Debug.Log("prev_ans updated: " + imgScanned);
+        }
+        else
+        {
+            Debug.Log("display scan again message");
+        }
+    }
 
 
 
@@ -132,7 +138,7 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
 
 
 
-       
+
 
         if (ImageTargetTemplate)
 
@@ -151,7 +157,10 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
 
 
 
-            RText.text = obj.retriveList[targetSearchResult.TargetName];
+            RText.text = obj.retriveList[targetSearchResult.TargetName][0];
+            Debug.Log("s c h : " + RText.text);
+
+            check(targetSearchResult.TargetName);
 
 
 
@@ -210,3 +219,4 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
     }
 
 }
+

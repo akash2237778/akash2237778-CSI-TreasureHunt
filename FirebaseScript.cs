@@ -9,7 +9,7 @@ using Firebase.Unity.Editor;
 
 public class FirebaseScript : MonoBehaviour
 {
-    public Dictionary<string, string> retriveList;
+    public Dictionary<string, List<string>> retriveList;
 
 
 
@@ -26,7 +26,7 @@ public class FirebaseScript : MonoBehaviour
     public void Start()
 
     {
-        retriveList = new Dictionary<string, string>();
+        retriveList = new Dictionary<string, List<string>>();
         Debug.Log("firebase script");
 
 
@@ -74,45 +74,47 @@ public class FirebaseScript : MonoBehaviour
 
         FirebaseDatabase.DefaultInstance.RootReference.Child(reference).GetValueAsync().ContinueWith(task => {
 
-          if (task.IsFaulted)
+            if (task.IsFaulted)
 
-          {
-                  Debug.Log("faulted retrive");
+            {
+                Debug.Log("faulted retrive");
 
-              // Handle the error...
+                // Handle the error...
 
-          }
+            }
 
-          else if (task.IsCompleted)
+            else if (task.IsCompleted)
 
-          {
+            {
 
 
 
-              DataSnapshot snapshot = task.Result;
+                DataSnapshot snapshot = task.Result;
 
                 // string sss = (string)snapshot.Value;
 
 
 
 
-                foreach (var childSnapshot in snapshot.Children){
+                foreach (var childSnapshot in snapshot.Children)
+                {
 
-                  Debug.Log(childSnapshot.Key+" : "+childSnapshot.Value);
-                    retriveList.Add(childSnapshot.Key.ToString() , childSnapshot.Value.ToString());
+                    //  Debug.Log(childSnapshot.Key + " : " + childSnapshot.Value);
+                    Debug.Log("QA: " + childSnapshot.Child("Q").Value + " : " + childSnapshot.Child("A").Value);
+                    retriveList.Add(childSnapshot.Key.ToString(), new List<string> { childSnapshot.Child("Q").Value.ToString(), childSnapshot.Child("A").Value.ToString() });
 
 
                 }
 
+                //   Debug.Log("list QA : " + retriveList["github"][0]);
 
 
- 
 
                 // Do something with snapshot...
 
             }
 
-          });
+        });
 
 
 
@@ -267,4 +269,3 @@ public class FirebaseScript : MonoBehaviour
     }
 
 }
-
