@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Firebase;
@@ -6,8 +7,20 @@ using Firebase.Database;
 using Firebase.Unity.Editor;
 
 
+/*
+ * public class Qlist
+{
+   public Qlist(string k, string v) {
+        key = k;
+        value = v;
+    }
+    public string key;
+    public string value;
 
+
+}*/
 public class FirebaseScript : MonoBehaviour
+
 {
     public Dictionary<string, List<string>> retriveList;
 
@@ -33,10 +46,11 @@ public class FirebaseScript : MonoBehaviour
 
 
         setupFirebase();
-        retriveData("csi-treasurehunt/Questions/");
-        saveData("A", "B");
+        retriveData("Questions/");
 
-        saveData("A1", 21);
+        //  saveData("A", "B");
+
+        //  saveData("A1", 21);
 
 
 
@@ -48,7 +62,7 @@ public class FirebaseScript : MonoBehaviour
 
         reference.ChildMoved += HandleChildMoved;
 
-
+        FirebaseDatabase.DefaultInstance.GetReference("Players").OrderByChild("score").ValueChanged += HandleValueChanged;
 
 
 
@@ -120,38 +134,45 @@ public class FirebaseScript : MonoBehaviour
 
     }
 
-    /*
 
-        void HandleValueChanged(object sender, ValueChangedEventArgs args)
+
+    void HandleValueChanged(object sender, ValueChangedEventArgs args)
+
+    {
+        Debug.Log("in value change");
+
+        if (args.DatabaseError != null)
 
         {
 
-            if (args.DatabaseError != null)
+            Debug.LogError(args.DatabaseError.Message);
 
-            {
-
-                Debug.LogError(args.DatabaseError.Message);
-
-                return;
-
-            }
-
-            Debug.Log(args.Snapshot.Value);
-
-            Rtext.text = (string)args.Snapshot.Value;
-
-            // Do something with the data in args.Snapshot
+            return;
 
         }
 
-        */
+        // Debug.Log(args.Snapshot.Child("1uid").Value);
+        foreach (var childSnapshot in args.Snapshot.Children)
+        { Debug.Log(childSnapshot.Child("name").Value + " : " + childSnapshot.Child("score").Value); }
+        //   Debug.Log(args.Snapshot.Child("uid").Child("score").Value);
+
+
+
+
+        //   Rtext.text = (string)args.Snapshot.Value;
+
+        // Do something with the data in args.Snapshot
+
+    }
+
 
 
 
     public void saveData(string child, int value)
     {
 
-        reference.Child("csi-treasurehunt").Child(child).SetValueAsync(value);
+        Debug.Log(child + ", save data , " + value);
+        reference.Child("Players").Child(child).Child("score").SetValueAsync(value);
 
     }
 
@@ -161,6 +182,13 @@ public class FirebaseScript : MonoBehaviour
     {
 
         reference.Child("csi-treasurehunt").Child(child).SetValueAsync(value);
+
+    }
+
+    public void saveData(string child, bool value)
+    {
+
+        reference.Child("Players").Child(child).Child("canPlay").SetValueAsync(value);
 
     }
 

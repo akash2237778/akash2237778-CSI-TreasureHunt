@@ -1,13 +1,21 @@
 ﻿using System.Collections;
+
 using System.Collections.Generic;
+
 using UnityEngine;
+
 using Vuforia;
 
 
 
-public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
+
+
+
+
+public class VuforiaScript : MonoBehaviour, IObjectRecoEventHandler
 {
-   private CloudRecoBehaviour mCloudRecoBehaviour;
+
+    private CloudRecoBehaviour mCloudRecoBehaviour;
 
     private bool mIsScanning = false;
 
@@ -19,16 +27,14 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
 
     public static bool isfound = false;
 
-    
+   
     FirebaseScript obj;
-
     GameObject g;
 
     string prev_ans;
 
-
-
-
+    private string uid = "uid1";
+    private int score = 0;
 
     // Use this for initialization 
 
@@ -39,19 +45,14 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
         obj = g.GetComponent<FirebaseScript>();
 
         prev_ans = "github";
-
+        obj.saveData(uid, false);
         // register this event handler at the cloud reco behaviour 
 
         mCloudRecoBehaviour = GetComponent<CloudRecoBehaviour>();
 
-
-
         if (mCloudRecoBehaviour)
-
         {
-
             mCloudRecoBehaviour.RegisterEventHandler(this);
-
         }
     }
 
@@ -59,16 +60,18 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
     {
         if (imgScanned.Equals(obj.retriveList[prev_ans][1]))
         {
+            Debug.Log("correct answer");
+
+            score++;
+            obj.saveData(uid, score);
             prev_ans = imgScanned;
             Debug.Log("prev_ans updated: " + imgScanned);
         }
         else
         {
-            Debug.Log("display scan again message");
+            Debug.Log("display scan again message (wrong answer)");
         }
     }
-
-
 
     public void OnInitialized(TargetFinder targetFinder)
 
@@ -219,4 +222,3 @@ public class VuforiaScript : MonoBehaviour , IObjectRecoEventHandler
     }
 
 }
-
