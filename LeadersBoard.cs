@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LeadersBoard : MonoBehaviour
 {
@@ -24,6 +25,9 @@ public class LeadersBoard : MonoBehaviour
             entryRectTransform.anchoredPosition = new Vector2(0, -height * i);
             entryTransform.gameObject.SetActive(true);
 
+            entryTransform.Find("Rank").GetComponent<Text>().text = "2";
+            entryTransform.Find("Name").GetComponent<Text>().text = "AAk" + i;
+            entryTransform.Find("Score").GetComponent<Text>().text = "R:" + i;
         }
     }
 
