@@ -27,9 +27,8 @@ public class VuforiaScript : MonoBehaviour, IObjectRecoEventHandler
 
     public static bool isfound = false;
 
-   
     FirebaseScript obj;
-    GameObject g;
+      GameObject g;
 
     string prev_ans;
 
@@ -63,9 +62,21 @@ public class VuforiaScript : MonoBehaviour, IObjectRecoEventHandler
             Debug.Log("correct answer");
 
             score++;
+
             obj.saveData(uid, score);
             prev_ans = imgScanned;
             Debug.Log("prev_ans updated: " + imgScanned);
+            //call function to display next question 
+            if (score == obj.retriveList.Count)
+            {
+                int c = obj.getCount();
+                c++;
+                obj.saveRankCount(c);
+                obj.saveRankerPosition(uid, c);
+            }
+
+            //call function to update user's displayed score (UI)
+
         }
         else
         {

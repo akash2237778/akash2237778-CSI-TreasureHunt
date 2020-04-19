@@ -24,6 +24,8 @@ public class FirebaseScript : MonoBehaviour
 {
     public Dictionary<string, List<string>> retriveList;
 
+    public Dictionary<string, int> scoreList;
+    public Dictionary<string, int> rankList;
 
 
     DatabaseReference reference;
@@ -41,7 +43,8 @@ public class FirebaseScript : MonoBehaviour
     {
         retriveList = new Dictionary<string, List<string>>();
         Debug.Log("firebase script");
-
+        scoreList = new Dictionary<string, int>();
+        rankList = new Dictionary<string, int>();
 
 
 
@@ -64,7 +67,7 @@ public class FirebaseScript : MonoBehaviour
 
         FirebaseDatabase.DefaultInstance.GetReference("Players").OrderByChild("score").ValueChanged += HandleValueChanged;
 
-
+        FirebaseDatabase.DefaultInstance.GetReference("rank/holders").OrderByChild("position").ValueChanged += HandleRankValueChanged;
 
     }
 
@@ -150,21 +153,46 @@ public class FirebaseScript : MonoBehaviour
             return;
 
         }
-
+        scoreList.Clear();
         // Debug.Log(args.Snapshot.Child("1uid").Value);
         foreach (var childSnapshot in args.Snapshot.Children)
-        { Debug.Log(childSnapshot.Child("name").Value + " : " + childSnapshot.Child("score").Value); }
-        //   Debug.Log(args.Snapshot.Child("uid").Child("score").Value);
+        {
+            Debug.Log(childSnapshot.Child("name").Value + " : " + childSnapshot.Child("score").Value);
+            scoreList.Add(childSnapshot.Child("name").Value.ToString(), int.Parse(childSnapshot.Child("score").Value.ToString()));
+        }
 
-
-
-
-        //   Rtext.text = (string)args.Snapshot.Value;
-
-        // Do something with the data in args.Snapshot
+        //call function to update values in leaderboard UI using scoreList (showing live scores of all players)
 
     }
 
+
+    void HandleRankValueChanged(object sender, ValueChangedEventArgs args)
+
+    {
+        Debug.Log("in value change");
+
+        if (args.DatabaseError != null)
+
+        {
+
+            Debug.LogError(args.DatabaseError.Message);
+
+            return;
+
+        }
+        rankList.Clear();
+        // Debug.Log(args.Snapshot.Child("1uid").Value);
+        foreach (var childSnapshot in args.Snapshot.Children)
+        {
+            Debug.Log(childSnapshot.Key + " : " + childSnapshot.Child("position").Value);
+            rankList.Add(childSnapshot.Key.ToString(), int.Parse(childSnapshot.Child("position").Value.ToString()));
+
+
+        }
+
+        //call function to update winners (rank) in leaderboard UI using rankList
+
+    }
 
 
 
@@ -284,7 +312,60 @@ public class FirebaseScript : MonoBehaviour
 
 
 
+    public int getCount()
+    {
+        Debug.Log("In get count");
+        int a = -1;
 
+        FirebaseDatabase.DefaultInstance.GetReference("rank/count").GetValueAsync().ContinueWith(task => {
+
+            if (task.IsFaulted)
+
+            {
+                Debug.Log("faulted retrive rank");
+
+                // Handle the error...
+
+            }
+
+            else if (task.IsCompleted)
+
+            {
+
+
+
+                DataSnapshot snapshot = task.Result;
+
+                // string sss = (string)snapshot.Value;
+
+                Debug.Log("rank value: " + snapshot.Value);
+                a = int.Parse(snapshot.Value.ToString());
+
+
+
+            }
+
+        });
+
+
+        return a;
+    }
+
+    public void saveRankCount(int value)
+    {
+
+        //Debug.Log(child + ", save data , " + value);
+        reference.Child("rank/count").SetValueAsync(value);
+
+    }
+
+    public void saveRankerPosition(string child, int value)
+    {
+
+        //Debug.Log(child + ", save data , " + value);
+        reference.Child("rank/holders").Child(child).Child("position").SetValueAsync(value);
+
+    }
 
     // Update is called once per frame
 
