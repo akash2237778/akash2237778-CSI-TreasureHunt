@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Firebase;
@@ -6,11 +7,25 @@ using Firebase.Database;
 using Firebase.Unity.Editor;
 
 
+/*
+ * public class Qlist
+{
+   public Qlist(string k, string v) {
+        key = k;
+        value = v;
+    }
+    public string key;
+    public string value;
 
+
+}*/
 public class FirebaseScript : MonoBehaviour
+
 {
     public Dictionary<string, List<string>> retriveList;
 
+    public Dictionary<string, int> scoreList;
+    public Dictionary<string, int> rankList;
 
 
     DatabaseReference reference;
@@ -28,15 +43,17 @@ public class FirebaseScript : MonoBehaviour
     {
         retriveList = new Dictionary<string, List<string>>();
         Debug.Log("firebase script");
-
+        scoreList = new Dictionary<string, int>();
+        rankList = new Dictionary<string, int>();
 
 
 
         setupFirebase();
-        retriveData("csi-treasurehunt/Questions/");
-        saveData("A", "B");
+        retriveData("Questions/");
 
-        saveData("A1", 21);
+        //  saveData("A", "B");
+
+        //  saveData("A1", 21);
 
 
 
@@ -48,9 +65,9 @@ public class FirebaseScript : MonoBehaviour
 
         reference.ChildMoved += HandleChildMoved;
 
+        FirebaseDatabase.DefaultInstance.GetReference("Players").OrderByChild("score").ValueChanged += HandleValueChanged;
 
-
-
+        FirebaseDatabase.DefaultInstance.GetReference("rank/holders").OrderByChild("position").ValueChanged += HandleRankValueChanged;
 
     }
 
@@ -120,38 +137,70 @@ public class FirebaseScript : MonoBehaviour
 
     }
 
-    /*
 
-        void HandleValueChanged(object sender, ValueChangedEventArgs args)
+
+    void HandleValueChanged(object sender, ValueChangedEventArgs args)
+
+    {
+        Debug.Log("in value change");
+
+        if (args.DatabaseError != null)
 
         {
 
-            if (args.DatabaseError != null)
+            Debug.LogError(args.DatabaseError.Message);
 
-            {
+            return;
 
-                Debug.LogError(args.DatabaseError.Message);
+        }
+        scoreList.Clear();
+        // Debug.Log(args.Snapshot.Child("1uid").Value);
+        foreach (var childSnapshot in args.Snapshot.Children)
+        {
+            Debug.Log(childSnapshot.Child("name").Value + " : " + childSnapshot.Child("score").Value);
+            scoreList.Add(childSnapshot.Child("name").Value.ToString(), int.Parse(childSnapshot.Child("score").Value.ToString()));
+        }
 
-                return;
+        //call function to update values in leaderboard UI using scoreList (showing live scores of all players)
 
-            }
+    }
 
-            Debug.Log(args.Snapshot.Value);
 
-            Rtext.text = (string)args.Snapshot.Value;
+    void HandleRankValueChanged(object sender, ValueChangedEventArgs args)
 
-            // Do something with the data in args.Snapshot
+    {
+        Debug.Log("in value change");
+
+        if (args.DatabaseError != null)
+
+        {
+
+            Debug.LogError(args.DatabaseError.Message);
+
+            return;
+
+        }
+        rankList.Clear();
+        // Debug.Log(args.Snapshot.Child("1uid").Value);
+        foreach (var childSnapshot in args.Snapshot.Children)
+        {
+            Debug.Log(childSnapshot.Key + " : " + childSnapshot.Child("position").Value);
+            rankList.Add(childSnapshot.Key.ToString(), int.Parse(childSnapshot.Child("position").Value.ToString()));
+
 
         }
 
-        */
+        //call function to update winners (rank) in leaderboard UI using rankList
+
+    }
 
 
 
     public void saveData(string child, int value)
     {
 
-        reference.Child("csi-treasurehunt").Child(child).SetValueAsync(value);
+        Debug.Log(child + ", save data , " + value);
+        reference.Child("Players").Child(child).Child("score").SetValueAsync(value);
 
     }
 
@@ -161,6 +210,13 @@ public class FirebaseScript : MonoBehaviour
     {
 
         reference.Child("csi-treasurehunt").Child(child).SetValueAsync(value);
+
+    }
+
+    public void saveData(string child, bool value)
+    {
+
+        reference.Child("Players").Child(child).Child("canPlay").SetValueAsync(value);
 
     }
 
@@ -256,7 +312,60 @@ public class FirebaseScript : MonoBehaviour
 
 
 
+    public int getCount()
+    {
+        Debug.Log("In get count");
+        int a = -1;
 
+        FirebaseDatabase.DefaultInstance.GetReference("rank/count").GetValueAsync().ContinueWith(task => {
+
+            if (task.IsFaulted)
+
+            {
+                Debug.Log("faulted retrive rank");
+
+                // Handle the error...
+
+            }
+
+            else if (task.IsCompleted)
+
+            {
+
+
+
+                DataSnapshot snapshot = task.Result;
+
+                // string sss = (string)snapshot.Value;
+
+                Debug.Log("rank value: " + snapshot.Value);
+                a = int.Parse(snapshot.Value.ToString());
+
+
+
+            }
+
+        });
+
+
+        return a;
+    }
+
+    public void saveRankCount(int value)
+    {
+
+        //Debug.Log(child + ", save data , " + value);
+        reference.Child("rank/count").SetValueAsync(value);
+
+    }
+
+    public void saveRankerPosition(string child, int value)
+    {
+
+        //Debug.Log(child + ", save data , " + value);
+        reference.Child("rank/holders").Child(child).Child("position").SetValueAsync(value);
+
+    }
 
     // Update is called once per frame
 
