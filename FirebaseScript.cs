@@ -19,7 +19,7 @@ using Firebase.Unity.Editor;
 
 
 }*/
-public class FirebaseScript : MonoBehaviour
+public class FirebaseScript : LeadersBoard
 
 {
     public Dictionary<string, List<string>> retriveList;
@@ -41,6 +41,7 @@ public class FirebaseScript : MonoBehaviour
     public void Start()
 
     {
+        LeadersBoardConstructor();
         retriveList = new Dictionary<string, List<string>>();
         Debug.Log("firebase script");
         scoreList = new Dictionary<string, int>();
@@ -142,6 +143,7 @@ public class FirebaseScript : MonoBehaviour
     void HandleValueChanged(object sender, ValueChangedEventArgs args)
 
     {
+
         Debug.Log("in value change");
 
         if (args.DatabaseError != null)
@@ -155,9 +157,13 @@ public class FirebaseScript : MonoBehaviour
         }
         scoreList.Clear();
         // Debug.Log(args.Snapshot.Child("1uid").Value);
+        int i = 0;
         foreach (var childSnapshot in args.Snapshot.Children)
         {
             Debug.Log(childSnapshot.Child("name").Value + " : " + childSnapshot.Child("score").Value);
+            string name = childSnapshot.Child("name").Value.ToString();
+            string value = childSnapshot.Child("score").Value.ToString();
+            setTextBoard(i++,name , value);
             scoreList.Add(childSnapshot.Child("name").Value.ToString(), int.Parse(childSnapshot.Child("score").Value.ToString()));
         }
 
