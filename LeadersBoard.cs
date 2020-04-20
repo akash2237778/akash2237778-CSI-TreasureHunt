@@ -10,6 +10,8 @@ public class LeadersBoard : MonoBehaviour
     private Transform entryContainer;
     private Transform entryTemplate;
     float height = 20f;
+    List<Transform> entryTransformList;
+    List<RectTransform> entryRectTransformList;
 
     // Start is called before the first frame update
     public void LeadersBoardConstructor()
@@ -20,7 +22,7 @@ public class LeadersBoard : MonoBehaviour
 
         entryTemplate.gameObject.SetActive(false);
 
-
+        entryTransformList = new List<Transform>();
 
     }
 
@@ -29,14 +31,20 @@ public class LeadersBoard : MonoBehaviour
         RectTransform entryRectTransform = entryTransform.GetComponent<RectTransform>();
         entryRectTransform.anchoredPosition = new Vector2(0, -height * i);
         entryTransform.gameObject.SetActive(true);
+        
+        entryTransform.Find("Rank").GetComponent<Text>().text = i.ToString();
+        entryTransform.Find("Name").GetComponent<Text>().text = name;
+        entryTransform.Find("Score").GetComponent<Text>().text = score;
+        Debug.Log(name +"Board");
+        entryTransformList.Add(entryTransform);
+       }
 
-        entryTransform.Find("Rank").GetComponent<Text>().text = "2";
-        entryTransform.Find("Name").GetComponent<Text>().text = name + i;
-        entryTransform.Find("Score").GetComponent<Text>().text = score + i;
-
-       // return i++;
+    public void clear() {
+        Debug.Log("in CLear......");
+        for (int i = 0; i < entryTransformList.Count; i++) {
+            entryTransformList[i].gameObject.SetActive(false);
+        }
     }
-
     // Update is called once per frame
    
 }

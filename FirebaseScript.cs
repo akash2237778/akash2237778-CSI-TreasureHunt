@@ -155,15 +155,15 @@ public class FirebaseScript : LeadersBoard
             return;
 
         }
+        clear();
         scoreList.Clear();
         // Debug.Log(args.Snapshot.Child("1uid").Value);
         int i = 0;
         foreach (var childSnapshot in args.Snapshot.Children)
         {
+            
             Debug.Log(childSnapshot.Child("name").Value + " : " + childSnapshot.Child("score").Value);
-            string name = childSnapshot.Child("name").Value.ToString();
-            string value = childSnapshot.Child("score").Value.ToString();
-            setTextBoard(i++,name , value);
+            setTextBoard(i++, childSnapshot.Child("name").Value.ToString(), childSnapshot.Child("score").Value.ToString());
             scoreList.Add(childSnapshot.Child("name").Value.ToString(), int.Parse(childSnapshot.Child("score").Value.ToString()));
         }
 
