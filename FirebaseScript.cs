@@ -1,6 +1,7 @@
 ﻿
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Firebase;
 using Firebase.Database;
@@ -50,7 +51,7 @@ public class FirebaseScript : MonoBehaviour
 
         setupFirebase();
         retriveData("Questions/");
-
+        // saveRankCount(1);
         //  saveData("A", "B");
 
         //  saveData("A1", 21);
@@ -65,9 +66,9 @@ public class FirebaseScript : MonoBehaviour
 
         reference.ChildMoved += HandleChildMoved;
 
-        FirebaseDatabase.DefaultInstance.GetReference("Players").OrderByChild("score").ValueChanged += HandleValueChanged;
+        FirebaseDatabase.DefaultInstance.GetReference("currentPlayers").OrderByChild("score").LimitToLast(10).ValueChanged += HandleValueChanged;
 
-        FirebaseDatabase.DefaultInstance.GetReference("rank/holders").OrderByChild("position").ValueChanged += HandleRankValueChanged;
+        FirebaseDatabase.DefaultInstance.GetReference("rank/holders").OrderByChild("position").LimitToFirst(5).ValueChanged += HandleRankValueChanged;
 
     }
 
@@ -123,6 +124,8 @@ public class FirebaseScript : MonoBehaviour
 
                 }
 
+
+
                 //   Debug.Log("list QA : " + retriveList["github"][0]);
 
 
@@ -156,10 +159,17 @@ public class FirebaseScript : MonoBehaviour
         scoreList.Clear();
         // Debug.Log(args.Snapshot.Child("1uid").Value);
         foreach (var childSnapshot in args.Snapshot.Children)
-        {
-            Debug.Log(childSnapshot.Child("name").Value + " : " + childSnapshot.Child("score").Value);
-            scoreList.Add(childSnapshot.Child("name").Value.ToString(), int.Parse(childSnapshot.Child("score").Value.ToString()));
+        { //Debug.Log(childSnapshot.Child("name").Value+" : "+childSnapshot.Child("score").Value);
+            scoreList.Add(childSnapshot.Key.ToString(), int.Parse(childSnapshot.Child("score").Value.ToString()));
         }
+
+        Debug.Log("Dict");
+        foreach (KeyValuePair<string, int> author in scoreList.OrderByDescending(key => key.Value))
+        {
+            Debug.Log(author.Key + " , " + author.Value);
+        }
+
+
 
         //call function to update values in leaderboard UI using scoreList (showing live scores of all players)
 
@@ -200,7 +210,7 @@ public class FirebaseScript : MonoBehaviour
     {
 
         Debug.Log(child + ", save data , " + value);
-        reference.Child("Players").Child(child).Child("score").SetValueAsync(value);
+        reference.Child("currentPlayers").Child(child).Child("score").SetValueAsync(value);
 
     }
 
@@ -353,9 +363,31 @@ public class FirebaseScript : MonoBehaviour
 
     public void saveRankCount(int value)
     {
+        //Debug.Log("save rank count");
 
         //Debug.Log(child + ", save data , " + value);
         reference.Child("rank/count").SetValueAsync(value);
+
+        /*    FirebaseDatabase.DefaultInstance.GetReference("rank/count").RunTransaction(mutableData =>
+            {
+                int c = int.Parse(mutableData.Value.ToString());
+                // if (c == null) {
+
+                // }
+                Debug.Log("count tran value : "+c);
+                mutableData.Value = c+1;
+                Debug.Log("count tran value c+1 : " + c+1);
+                return TransactionResult.Success(mutableData);
+            });
+            */
+
+
+    }
+    public void DeleteFromPlayer(string child)
+    {
+
+        Debug.Log("Delete " + child);
+        reference.Child("currentPlayers").Child(child).SetValueAsync(null);
 
     }
 

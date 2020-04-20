@@ -28,7 +28,8 @@ public class VuforiaScript : MonoBehaviour, IObjectRecoEventHandler
     public static bool isfound = false;
 
     FirebaseScript obj;
-      GameObject g;
+
+    GameObject g;
 
     string prev_ans;
 
@@ -44,7 +45,9 @@ public class VuforiaScript : MonoBehaviour, IObjectRecoEventHandler
         obj = g.GetComponent<FirebaseScript>();
 
         prev_ans = "github";
+
         obj.saveData(uid, false);
+        obj.saveData(uid, 0);
         // register this event handler at the cloud reco behaviour 
 
         mCloudRecoBehaviour = GetComponent<CloudRecoBehaviour>();
@@ -73,6 +76,9 @@ public class VuforiaScript : MonoBehaviour, IObjectRecoEventHandler
                 c++;
                 obj.saveRankCount(c);
                 obj.saveRankerPosition(uid, c);
+                obj.DeleteFromPlayer(uid);
+
+                //Finish game
             }
 
             //call function to update user's displayed score (UI)
