@@ -27,9 +27,9 @@ public class VuforiaScript : MonoBehaviour, IObjectRecoEventHandler
 
     public static bool isfound = false;
 
+    
     FirebaseScript obj;
-
-    GameObject g;
+       GameObject g;
 
     string prev_ans;
 
@@ -72,10 +72,10 @@ public class VuforiaScript : MonoBehaviour, IObjectRecoEventHandler
             //call function to display next question 
             if (score == obj.retriveList.Count)
             {
-                int c = obj.getCount();
-                c++;
-                obj.saveRankCount(c);
-                obj.saveRankerPosition(uid, c);
+                // int c=obj.getCount();
+                //c++;
+                obj.saveRankCount(uid);
+                //   obj.saveRankerPosition(uid, c);
                 obj.DeleteFromPlayer(uid);
 
                 //Finish game
@@ -156,14 +156,8 @@ public class VuforiaScript : MonoBehaviour, IObjectRecoEventHandler
 
         mCloudRecoBehaviour.CloudRecoEnabled = false;
 
-
-
-
-
         if (ImageTargetTemplate)
-
         {
-
             isfound = true;
 
             // enable the new result with the same ImageTargetBehaviour: 
@@ -171,11 +165,6 @@ public class VuforiaScript : MonoBehaviour, IObjectRecoEventHandler
             ObjectTracker tracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
 
             tracker.GetTargetFinder<ImageTargetFinder>().EnableTracking(targetSearchResult, ImageTargetTemplate.gameObject);
-
-
-
-
-
 
             RText.text = obj.retriveList[targetSearchResult.TargetName][0];
             Debug.Log("s c h : " + RText.text);
@@ -207,15 +196,11 @@ public class VuforiaScript : MonoBehaviour, IObjectRecoEventHandler
         // so that user can restart cloud scanning
 
         if (!mIsScanning)
-
         {
 
             if (GUI.Button(new Rect(100, 300, 200, 50), "Restart Scanning"))
-
             {
-
                 // Restart TargetFinder
-
                 mCloudRecoBehaviour.CloudRecoEnabled = true;
 
             }

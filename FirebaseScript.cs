@@ -8,18 +8,7 @@ using Firebase.Database;
 using Firebase.Unity.Editor;
 
 
-/*
- * public class Qlist
-{
-   public Qlist(string k, string v) {
-        key = k;
-        value = v;
-    }
-    public string key;
-    public string value;
 
-
-}*/
 public class FirebaseScript : MonoBehaviour
 
 {
@@ -51,7 +40,8 @@ public class FirebaseScript : MonoBehaviour
 
         setupFirebase();
         retriveData("Questions/");
-        // saveRankCount(1);
+
+        // saveRankCount("uid1");
         //  saveData("A", "B");
 
         //  saveData("A1", 21);
@@ -143,18 +133,13 @@ public class FirebaseScript : MonoBehaviour
 
 
     void HandleValueChanged(object sender, ValueChangedEventArgs args)
-
     {
         Debug.Log("in value change");
 
         if (args.DatabaseError != null)
-
         {
-
             Debug.LogError(args.DatabaseError.Message);
-
             return;
-
         }
         scoreList.Clear();
         // Debug.Log(args.Snapshot.Child("1uid").Value);
@@ -168,8 +153,6 @@ public class FirebaseScript : MonoBehaviour
         {
             Debug.Log(author.Key + " , " + author.Value);
         }
-
-
 
         //call function to update values in leaderboard UI using scoreList (showing live scores of all players)
 
@@ -361,28 +344,39 @@ public class FirebaseScript : MonoBehaviour
         return a;
     }
 
-    public void saveRankCount(int value)
+    public void saveRankCount(string child)
     {
-        //Debug.Log("save rank count");
+      
+        //  reference.Child("rank/count").SetValueAsync(value);
+        Debug.Log("in save rank count function");
+        FirebaseDatabase.DefaultInstance.GetReference("rank/count").RunTransaction(mutableData =>
+        {
+            Debug.Log("inside run transaction ");
 
-        //Debug.Log(child + ", save data , " + value);
-        reference.Child("rank/count").SetValueAsync(value);
-
-        /*    FirebaseDatabase.DefaultInstance.GetReference("rank/count").RunTransaction(mutableData =>
+            var c = mutableData.Value;
+            Debug.Log(c);
+            if (c == null)
             {
-                int c = int.Parse(mutableData.Value.ToString());
-                // if (c == null) {
+                Debug.Log("null count transaction");
+            }
+            else
+            {
+                int countVal = int.Parse(c.ToString());
+                Debug.Log("count tran value : " + c);
+                mutableData.Value = countVal + 1;
+                Debug.Log("count tran value c+1 : " + (countVal + 1));
+                saveRankerPosition(child, (countVal + 1));
+            }
+            return TransactionResult.Success(mutableData);
 
-                // }
-                Debug.Log("count tran value : "+c);
-                mutableData.Value = c+1;
-                Debug.Log("count tran value c+1 : " + c+1);
-                return TransactionResult.Success(mutableData);
-            });
-            */
+        });
 
+
+
+      
 
     }
+
     public void DeleteFromPlayer(string child)
     {
 
