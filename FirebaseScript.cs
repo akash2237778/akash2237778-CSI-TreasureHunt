@@ -357,11 +357,67 @@ public class FirebaseScript : LeadersBoard
         return a;
     }
 
-    public void saveRankCount(int value)
+   public void saveRankCount(string child)
+
     {
 
-        //Debug.Log(child + ", save data , " + value);
-        reference.Child("rank/count").SetValueAsync(value);
+      
+
+        //  reference.Child("rank/count").SetValueAsync(value);
+
+        Debug.Log("in save rank count function");
+
+        FirebaseDatabase.DefaultInstance.GetReference("rank/count").RunTransaction(mutableData =>
+
+        {
+
+            Debug.Log("inside run transaction ");
+
+
+
+            var c = mutableData.Value;
+
+            Debug.Log(c);
+
+            if (c == null)
+
+            {
+
+                Debug.Log("null count transaction");
+
+            }
+
+            else
+
+            {
+
+                int countVal = int.Parse(c.ToString());
+
+                Debug.Log("count tran value : " + c);
+
+                mutableData.Value = countVal + 1;
+
+                Debug.Log("count tran value c+1 : " + (countVal + 1));
+
+                saveRankerPosition(child, (countVal + 1));
+
+            }
+
+            return TransactionResult.Success(mutableData);
+
+
+
+        });
+
+
+
+
+
+
+
+      
+
+
 
     }
 
