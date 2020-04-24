@@ -1,24 +1,13 @@
 ﻿
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Firebase;
 using Firebase.Database;
 using Firebase.Unity.Editor;
 
 
-/*
- * public class Qlist
-{
-   public Qlist(string k, string v) {
-        key = k;
-        value = v;
-    }
-    public string key;
-    public string value;
-
-
-}*/
 public class FirebaseScript : LeadersBoard
 
 {
@@ -66,9 +55,12 @@ public class FirebaseScript : LeadersBoard
 
         reference.ChildMoved += HandleChildMoved;
 
-        FirebaseDatabase.DefaultInstance.GetReference("Players").OrderByChild("score").ValueChanged += HandleValueChanged;
+         FirebaseDatabase.DefaultInstance.GetReference("currentPlayers").OrderByChild("score").LimitToLast(10).ValueChanged += HandleValueChanged;
 
-        FirebaseDatabase.DefaultInstance.GetReference("rank/holders").OrderByChild("position").ValueChanged += HandleRankValueChanged;
+       FirebaseDatabase.DefaultInstance.GetReference("rank/holders").OrderByChild("position").LimitToFirst(5).ValueChanged += HandleRankValueChanged;
+
+
+
 
     }
 
@@ -161,12 +153,16 @@ public class FirebaseScript : LeadersBoard
         int i = 0;
         foreach (var childSnapshot in args.Snapshot.Children)
         {
+             scoreList.Add(childSnapshot.Key.ToString(), int.Parse(childSnapshot.Child("score").Value.ToString()));
             
-            Debug.Log(childSnapshot.Child("name").Value + " : " + childSnapshot.Child("score").Value);
-            setTextBoard(i++, childSnapshot.Child("name").Value.ToString(), childSnapshot.Child("score").Value.ToString());
-            scoreList.Add(childSnapshot.Child("name").Value.ToString(), int.Parse(childSnapshot.Child("score").Value.ToString()));
         }
 
+      foreach (KeyValuePair<string, int> author in scoreList.OrderByDescending(key => key.Value))
+        {
+          
+            scoreList.Add(author.Key.ToString(), int.Parse(author.Value.ToString()));
+            Debug.Log(author.Key + " , " + author.Value);
+        }
         //call function to update values in leaderboard UI using scoreList (showing live scores of all players)
 
     }
@@ -206,7 +202,8 @@ public class FirebaseScript : LeadersBoard
     {
 
         Debug.Log(child + ", save data , " + value);
-        reference.Child("Players").Child(child).Child("score").SetValueAsync(value);
+        
+         reference.Child("currentPlayers").Child(child).Child("score").SetValueAsync(value);
 
     }
 
@@ -409,17 +406,8 @@ public class FirebaseScript : LeadersBoard
 
         });
 
-
-
-
-
-
-
-      
-
-
-
     }
+    
     
     public void DeleteFromPlayer(string child)
 
