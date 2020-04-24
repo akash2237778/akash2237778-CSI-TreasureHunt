@@ -420,6 +420,20 @@ public class FirebaseScript : LeadersBoard
 
 
     }
+    
+    public void DeleteFromPlayer(string child)
+
+    {
+
+
+
+        Debug.Log("Delete " + child);
+
+        reference.Child("currentPlayers").Child(child).SetValueAsync(null);
+
+
+
+    }
 
     public void saveRankerPosition(string child, int value)
     {
