@@ -69,10 +69,19 @@ public class VuforiaScript : MonoBehaviour, IObjectRecoEventHandler
             //call function to display next question 
             if (score == obj.retriveList.Count)
             {
-                int c = obj.getCount();
-                c++;
-                obj.saveRankCount(c);
-                obj.saveRankerPosition(uid, c);
+                 // int c=obj.getCount();
+
+                //c++;
+
+                obj.saveRankCount(uid);
+
+                //   obj.saveRankerPosition(uid, c);
+
+                obj.DeleteFromPlayer(uid);
+
+
+
+                //Finish game
             }
 
             //call function to update user's displayed score (UI)
