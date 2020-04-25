@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+
 public class UIHandler : MonoBehaviour
 {
     Firebase.Auth.FirebaseAuth auth;
@@ -16,6 +17,7 @@ public class UIHandler : MonoBehaviour
     public Button chngScene;
     public Text signInText;
     int retInt = 0;
+    public static string UserId;
 
     void Start() {
         //SceneManager.LoadScene("GameScene");
@@ -43,8 +45,8 @@ public class UIHandler : MonoBehaviour
             }
             if (task.IsCompleted) {
                 newUser = task.Result;
-                Debug.LogFormat("User signed in successfully: {0} ({1})",
-                newUser.DisplayName, newUser.UserId);
+                Debug.LogFormat("User signed in successfully: {0} ({1})", newUser.DisplayName, newUser.UserId);
+                UserId = newUser.UserId;
                 retInt = 2;
             }
 

@@ -159,8 +159,8 @@ public class FirebaseScript : LeadersBoard
 
       foreach (KeyValuePair<string, int> author in scoreList.OrderByDescending(key => key.Value))
         {
-          
-            scoreList.Add(author.Key.ToString(), int.Parse(author.Value.ToString()));
+            setTextBoard(i++, author.Key.ToString(), author.Value.ToString());
+           // scoreList.Add(author.Key.ToString(), int.Parse(author.Value.ToString()));
             Debug.Log(author.Key + " , " + author.Value);
         }
         //call function to update values in leaderboard UI using scoreList (showing live scores of all players)

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "166099259901",
+    "firebase_url": "https://csi-treasurehunt.firebaseio.com",
+    "project_id": "csi-treasurehunt",
+    "storage_bucket": "csi-treasurehunt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:166099259901:android:88967550f138a0f58dc994",
+        "android_client_info": {
+          "package_name": "com.Allusion.CSITreasureHunt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "166099259901-ef3fhi20blgf65ve25nk08q7qkv8tl6t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMMmS2SV2ynwwZ9doDKhcxePs8Kv5P-10"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "166099259901-ef3fhi20blgf65ve25nk08q7qkv8tl6t.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "166099259901-nrsaaotq69lqcclbfkaodi82uampk736.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.Allusion.CSITreasureHunt"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

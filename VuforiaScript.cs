@@ -12,7 +12,7 @@ using Vuforia;
 
 
 
-public class VuforiaScript : MonoBehaviour, IObjectRecoEventHandler
+public class VuforiaScript : UIHandler, IObjectRecoEventHandler
 {
 
     private CloudRecoBehaviour mCloudRecoBehaviour;
@@ -40,12 +40,15 @@ public class VuforiaScript : MonoBehaviour, IObjectRecoEventHandler
     void Start()
 
     {
+        Debug.Log(UserId);
         g = Camera.main.gameObject;
         obj = g.GetComponent<FirebaseScript>();
 
+        uid = UserId;
+
         prev_ans = "github";
-        obj.saveData(uid, false);
-        obj.saveData(uid, 0);
+      //  obj.saveData(uid, false);
+       // obj.saveData(uid, 0);
         // register this event handler at the cloud reco behaviour 
 
         mCloudRecoBehaviour = GetComponent<CloudRecoBehaviour>();
