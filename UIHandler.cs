@@ -16,19 +16,20 @@ public class UIHandler : MonoBehaviour
     Firebase.Auth.FirebaseUser newUser;
     public Button chngScene;
     public Text signInText;
-    int retInt = 0;
+    int retInt = 4;
     public static string UserId;
 
     void Start() {
         //SceneManager.LoadScene("GameScene");
         auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+        signInText.text = "Click here to proceed";
         Debug.Log(auth);
         SignIn.onClick.AddListener(delegate () { signIn(Email.text, Password.text); });
     }
 
 
     public int signIn(string email, string password) {
-        signInText.text = "Start Game";
+       
         auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task => {
             if (task.IsCanceled)
             {
@@ -38,7 +39,7 @@ public class UIHandler : MonoBehaviour
             }
             if (task.IsFaulted)
             {
-                signInText.text = "Error Occured";
+                
                 Debug.LogError("SignInWithEmailAndPasswordAsync encountered an error: " + task.Exception);
                 retInt = 1;
                 return;
@@ -50,17 +51,10 @@ public class UIHandler : MonoBehaviour
                 retInt = 2;
             }
 
-            if (retInt < 2)
-            {
-                signInText.text = "Error Occured";
-            }
 
         });
 
-        if (retInt == 2)
-        {
-            SceneManager.LoadScene("GameScene");
-        }
+
 
         return retInt;
     }
@@ -90,7 +84,15 @@ public class UIHandler : MonoBehaviour
 
 
     void Update() {
+        if (retInt == 2)
+        {
+            SceneManager.LoadScene("GameScene");
+        }
 
+        else if (retInt < 2)
+        {
+            signInText.text = "Error Occured";
+        }
     }
 
 }

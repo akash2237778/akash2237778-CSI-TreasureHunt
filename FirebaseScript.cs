@@ -44,8 +44,9 @@ public class FirebaseScript : LeadersBoard
         //  saveData("A", "B");
 
         //  saveData("A1", 21);
-
-
+        saveData("ui", false);
+        saveData("uid", 0);
+        
 
         reference.ChildChanged += HandleChildAdded;
 

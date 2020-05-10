@@ -47,8 +47,8 @@ public class VuforiaScript : UIHandler, IObjectRecoEventHandler
         uid = UserId;
 
         prev_ans = "github";
-      //  obj.saveData(uid, false);
-       // obj.saveData(uid, 0);
+       //obj.saveData(uid, false);
+        //obj.saveData(uid, 0);
         // register this event handler at the cloud reco behaviour 
 
         mCloudRecoBehaviour = GetComponent<CloudRecoBehaviour>();
