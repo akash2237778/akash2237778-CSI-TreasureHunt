@@ -132,6 +132,7 @@ public class FirebaseScript : LeadersBoard
                     Debug.Log("QA: " + childSnapshot.Child("Q").Value + " : " + childSnapshot.Child("A").Value);
                     string nam = "Null";
                     names.TryGetValue(childSnapshot.Key.ToString(), out nam);
+   
                     retriveList.Add(nam, new List<string> { childSnapshot.Child("Q").Value.ToString(), childSnapshot.Child("A").Value.ToString() });
 
 
@@ -174,7 +175,9 @@ public class FirebaseScript : LeadersBoard
         int i = 0;
         foreach (var childSnapshot in args.Snapshot.Children)
         {
-             scoreList.Add(childSnapshot.Key.ToString(), int.Parse(childSnapshot.Child("score").Value.ToString()));
+           // string nam = "Null";
+           // names.TryGetValue(childSnapshot.Key.ToString(), out nam);
+            scoreList.Add(childSnapshot.Key.ToString(), int.Parse(childSnapshot.Child("score").Value.ToString()));
             
         }
 
@@ -183,10 +186,15 @@ public class FirebaseScript : LeadersBoard
 
             string nam = "Null";
             names.TryGetValue(author.Key.ToString(), out nam);
-
-            setTextBoard(i++, nam, author.Value.ToString());
+            if (nam == null) {
+                FirebaseDatabase.DefaultInstance.GetReference("currentPlayers").OrderByChild("score").LimitToLast(10).ValueChanged += HandleValueChanged;
+            }
+            else
+            {
+                setTextBoard(i++, nam, author.Value.ToString());
+            }
            // scoreList.Add(author.Key.ToString(), int.Parse(author.Value.ToString()));
-            Debug.Log(author.Key + " , " + author.Value);
+            Debug.Log(nam + " , " + author.Value);
         }
         //call function to update values in leaderboard UI using scoreList (showing live scores of all players)
 
