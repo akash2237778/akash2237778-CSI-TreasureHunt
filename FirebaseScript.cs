@@ -20,7 +20,11 @@ public class FirebaseScript : LeadersBoard
     DatabaseReference reference;
 
     public string s;
+    Firebase.Auth.FirebaseAuth auth;
+    string name;
+    Dictionary<string , string> names;
 
+    
 
 
 
@@ -30,13 +34,26 @@ public class FirebaseScript : LeadersBoard
     public void Start()
 
     {
+
+
+        FirebaseDatabase.DefaultInstance.GetReference("names").LimitToFirst(5).ValueChanged += HandleNameValueChanged;
+
+
+        names = new Dictionary<string, string>();
         LeadersBoardConstructor();
         retriveList = new Dictionary<string, List<string>>();
         Debug.Log("firebase script");
         scoreList = new Dictionary<string, int>();
         rankList = new Dictionary<string, int>();
 
-
+        auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+        if (auth.CurrentUser != null)
+        {
+            name = auth.CurrentUser.DisplayName;
+        }
+        else {
+            name = "Auth Error";
+        }
 
         setupFirebase();
         retriveData("Questions/");
@@ -56,9 +73,11 @@ public class FirebaseScript : LeadersBoard
 
         reference.ChildMoved += HandleChildMoved;
 
-         FirebaseDatabase.DefaultInstance.GetReference("currentPlayers").OrderByChild("score").LimitToLast(10).ValueChanged += HandleValueChanged;
 
-       FirebaseDatabase.DefaultInstance.GetReference("rank/holders").OrderByChild("position").LimitToFirst(5).ValueChanged += HandleRankValueChanged;
+
+        FirebaseDatabase.DefaultInstance.GetReference("currentPlayers").OrderByChild("score").LimitToLast(10).ValueChanged += HandleValueChanged;
+        FirebaseDatabase.DefaultInstance.GetReference("rank/holders").OrderByChild("position").LimitToFirst(5).ValueChanged += HandleRankValueChanged;
+
 
 
 
@@ -106,13 +125,14 @@ public class FirebaseScript : LeadersBoard
 
 
 
-
                 foreach (var childSnapshot in snapshot.Children)
                 {
 
                     //  Debug.Log(childSnapshot.Key + " : " + childSnapshot.Value);
                     Debug.Log("QA: " + childSnapshot.Child("Q").Value + " : " + childSnapshot.Child("A").Value);
-                    retriveList.Add(childSnapshot.Key.ToString(), new List<string> { childSnapshot.Child("Q").Value.ToString(), childSnapshot.Child("A").Value.ToString() });
+                    string nam = "Null";
+                    names.TryGetValue(childSnapshot.Key.ToString(), out nam);
+                    retriveList.Add(nam, new List<string> { childSnapshot.Child("Q").Value.ToString(), childSnapshot.Child("A").Value.ToString() });
 
 
                 }
@@ -160,13 +180,49 @@ public class FirebaseScript : LeadersBoard
 
       foreach (KeyValuePair<string, int> author in scoreList.OrderByDescending(key => key.Value))
         {
-            setTextBoard(i++, author.Key.ToString(), author.Value.ToString());
+
+            string nam = "Null";
+            names.TryGetValue(author.Key.ToString(), out nam);
+
+            setTextBoard(i++, nam, author.Value.ToString());
            // scoreList.Add(author.Key.ToString(), int.Parse(author.Value.ToString()));
             Debug.Log(author.Key + " , " + author.Value);
         }
         //call function to update values in leaderboard UI using scoreList (showing live scores of all players)
 
     }
+
+
+
+    void HandleNameValueChanged(object sender, ValueChangedEventArgs args)
+
+    {
+        Debug.Log("in value change");
+
+        if (args.DatabaseError != null)
+
+        {
+
+            Debug.LogError(args.DatabaseError.Message);
+
+            return;
+
+        }
+
+        names.Clear();
+        // Debug.Log(args.Snapshot.Child("1uid").Value);
+        foreach (var childSnapshot in args.Snapshot.Children)
+        {
+            Debug.Log(childSnapshot.Key + " : " + childSnapshot.Value);
+            names.Add(childSnapshot.Key.ToString() , childSnapshot.Value.ToString());
+
+        }
+
+        //call function to update winners (rank) in leaderboard UI using rankList
+
+    }
+
+
 
 
     void HandleRankValueChanged(object sender, ValueChangedEventArgs args)
@@ -184,12 +240,16 @@ public class FirebaseScript : LeadersBoard
 
         }
         rankList.Clear();
+        int i = 0;
         // Debug.Log(args.Snapshot.Child("1uid").Value);
         foreach (var childSnapshot in args.Snapshot.Children)
         {
             Debug.Log(childSnapshot.Key + " : " + childSnapshot.Child("position").Value);
-            rankList.Add(childSnapshot.Key.ToString(), int.Parse(childSnapshot.Child("position").Value.ToString()));
+            string nam = "Null";
+            names.TryGetValue(childSnapshot.Key, out nam);
 
+            rankList.Add(nam, int.Parse(childSnapshot.Child("position").Value.ToString()));
+            i++;
 
         }
 
